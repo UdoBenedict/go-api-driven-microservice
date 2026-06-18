@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-api
+  template:
+    metadata:
+      labels:
+        app: go-api
+    spec:
+      containers:
+      - name: go-api-container
+        image: udonwaigwe/api-service-golang:v1.0
+        ports:
+        - containerPort: 8080
+        env:
+        # Pulling from ConfigMap
+        - name: API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: API_BASE_URL
+        # Pulling from Secret
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: api-secret
+              key: API_TOKEN
